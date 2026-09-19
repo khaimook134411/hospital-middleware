@@ -35,7 +35,6 @@ func Migrate(db *gorm.DB, cfg config.AppConfig) error {
 
 func runRawSQL(db *gorm.DB) error {
 	stmts := []string{
-		// CHECK constraints (no IF NOT EXISTS in Postgres; use DO block)
 		`DO $$ BEGIN
 			IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_staffs_role') THEN
 				ALTER TABLE staffs ADD CONSTRAINT chk_staffs_role CHECK (role IN ('admin','staff'));
@@ -48,7 +47,6 @@ func runRawSQL(db *gorm.DB) error {
 			END IF;
 		END $$`,
 
-		// FK on staff_hospitals with ON DELETE CASCADE
 		`DO $$ BEGIN
 			IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_staff_hospitals_staff') THEN
 				ALTER TABLE staff_hospitals
@@ -65,7 +63,6 @@ func runRawSQL(db *gorm.DB) error {
 			END IF;
 		END $$`,
 
-		// FK on patients
 		`DO $$ BEGIN
 			IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_patients_hospital') THEN
 				ALTER TABLE patients
@@ -74,18 +71,15 @@ func runRawSQL(db *gorm.DB) error {
 			END IF;
 		END $$`,
 
-		// Unique indexes on patients
 		`CREATE UNIQUE INDEX IF NOT EXISTS uq_patient_hn ON patients (hospital_id, patient_hn)`,
 		`CREATE UNIQUE INDEX IF NOT EXISTS uq_patient_national_id ON patients (hospital_id, national_id) WHERE national_id IS NOT NULL`,
 		`CREATE UNIQUE INDEX IF NOT EXISTS uq_patient_passport_id ON patients (hospital_id, passport_id) WHERE passport_id IS NOT NULL`,
 
-		// Compound search indexes on patients
 		`CREATE INDEX IF NOT EXISTS idx_patient_hospital_last_name_en ON patients (hospital_id, last_name_en)`,
 		`CREATE INDEX IF NOT EXISTS idx_patient_hospital_last_name_th ON patients (hospital_id, last_name_th)`,
 		`CREATE INDEX IF NOT EXISTS idx_patient_hospital_phone ON patients (hospital_id, phone_number)`,
 		`CREATE INDEX IF NOT EXISTS idx_patient_hospital_email ON patients (hospital_id, email)`,
 
-		// Index on staff_hospitals(hospital_id) for reverse lookup
 		`CREATE INDEX IF NOT EXISTS idx_staff_hospitals_hospital_id ON staff_hospitals (hospital_id)`,
 	}
 

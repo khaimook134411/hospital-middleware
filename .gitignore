@@ -31,5 +31,3 @@ go.work.sum
 /secret/public.pem
 
 *.pem
-
-CLAUDE.md

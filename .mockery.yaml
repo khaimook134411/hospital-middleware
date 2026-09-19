@@ -1,0 +1,23 @@
+with-expecter: true
+packages:
+  github.com/khaimook/hospital-middleware/client/his:
+    interfaces:
+      HISClient:
+  github.com/khaimook/hospital-middleware/repository/hospital:
+    interfaces:
+      HospitalRepository:
+  github.com/khaimook/hospital-middleware/repository/staff:
+    interfaces:
+      StaffRepository:
+  github.com/khaimook/hospital-middleware/service/admin:
+    interfaces:
+      AdminService:
+  github.com/khaimook/hospital-middleware/service/staff:
+    interfaces:
+      StaffService:
+  github.com/khaimook/hospital-middleware/service/patient:
+    interfaces:
+      PatientService:
+  github.com/khaimook/hospital-middleware/repository/patient:
+    interfaces:
+      PatientRepository:

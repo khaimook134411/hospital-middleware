@@ -18,16 +18,16 @@ import (
 	"github.com/khaimook/hospital-middleware/handler/middleware"
 )
 
-func BuildApp(db *gorm.DB) *gin.Engine {
+func BuildApp(db *gorm.DB, cfg config.AppConfig, h handler.Handlers) *gin.Engine {
 	r := gin.New()
 	r.Use(gin.Recovery())
 	r.Use(middleware.Logger())
-	handler.InitRouter(r, db)
+	handler.InitRouter(r, db, cfg, h)
 	return r
 }
 
-func InitApiServer(cfg config.AppConfig, db *gorm.DB) {
-	r := BuildApp(db)
+func InitApiServer(cfg config.AppConfig, db *gorm.DB, h handler.Handlers) {
+	r := BuildApp(db, cfg, h)
 
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%s", cfg.AppPort),
