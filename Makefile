@@ -1,4 +1,4 @@
-.PHONY: up down test test-integration coverage mocks lint
+.PHONY: up down seed test test-integration coverage mocks lint
 
 up:
 	docker compose up --build -d
@@ -20,3 +20,9 @@ mocks:
 
 lint:
 	go vet ./...
+
+seed:
+	docker exec -i agnos-db-1 psql \
+		-U $$(grep ^DB_USER .env | cut -d= -f2) \
+		-d $$(grep ^DB_NAME .env | cut -d= -f2) \
+		< scripts/seed_patients.sql
